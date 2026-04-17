@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="static/styles.css">
+
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="/">Dashboard</a></li>
+            <li><a href="/movies">View Movies</a></li>
+            <li><a href="/showtimes">View Showtimes</a></li>
+            <li><a href="/theaters">View Theaters</a></li>
+            <li><a href="/customers">Search Customers</a></li>
+        </ul>
+    </nav>
+    <h1>Welcome to the Better Movies Dashboard</h1>
+    <div id = 'total-movies'>
+        <h2>Total Movies: {{ total_movies }}</h2>
+    </div>
+    <div id = 'total-showings'>
+        <h2>Total Showings This Month: {{ total_showings }}</h2>
+    </div>
+        <div id="movie-table">
+        <table>
+            <tr>
+                <th>Showing ID</th>
+                <th>Movie ID</th>
+                <th>Title</th>
+                <th>Date</th>
+                <th>Showtime</th>
+            </tr>
+
+            {% for movie in movies %}
+            <tr>
+                <td>{{ movie[0] }}</td>
+                <td>{{ movie[1] }}</td>
+                <td>{{ movie[2] }}</td>
+                <td>{{ movie[3] }}</td>
+                <td>{{ movie[4] }}</td>
+            </tr>
+            {% endfor %}
+
+        </table>
+
+    </div>
+
+    <div id="total-tickets">
+        <h2>Total Tickets Sold: {{ total_tickets }}</h2>
+    </div>
+
+    <div id="total-revenue">
+        <h2>Total Revenue: ${{ total_revenue }}</h2>
+</body>
+</html>

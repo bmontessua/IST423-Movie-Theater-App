@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Movies</title>
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="/">Dashboard</a></li>
+            <li><a href="/movies">View Movies</a></li>
+            <li><a href="/showtimes">View Showtimes</a></li>
+            <li><a href="/theaters">View Theaters</a></li>
+            <li><a href="/customers">Search Customers</a></li>
+        </ul>
+    </nav>
+    <div id="customer-search">
+        <h2>Search Customers</h2>
+        <form method="POST">
+            <input type="text" name="customerName" placeholder="Search by customer name..." value="{{ search or '' }}">
+            <button type="submit">Search</button>
+        </form>
+    </div>
+    <h1>Customers</h1>
+    <div id="customer-table">
+        <table>
+            <tr>
+                <th>Movie</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Customer Name</th>
+                <th>Ticket Price</th>
+                <th>Seat Row</th>
+                <th>Seat Number</th>
+                <th>Seat Type</th>
+            </tr>
+
+            {% for customers in customers %}
+            <tr>
+                <td>{{ customers[0] }}</td>
+                <td>{{ customers[1] }}</td>
+                <td>{{ customers[2] }}</td>
+                <td>{{ customers[3] }}</td>
+                <td>{{ customers[4] }}</td>
+                <td>{{ customers[5] }}</td>
+                <td>{{ customers[6] }}</td>
+                <td>{{ customers[7] }}</td>
+            </tr>
+            {% endfor %}
+
+        </table>
+
+    </div>
+    
+
+        
+</body>
+</html>

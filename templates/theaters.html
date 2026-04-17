@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Movies</title>
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="/">Dashboard</a></li>
+            <li><a href="/movies">View Movies</a></li>
+            <li><a href="/showtimes">View Showtimes</a></li>
+            <li><a href="/theaters">View Theaters</a></li>
+            <li><a href="/customers">Search Customers</a></li>
+        </ul>
+    </nav>
+    <div id="theater-search">
+        <h2>Search Theaters</h2>
+        <form method="POST">
+            <input type="text" name="address" placeholder="Search by theater address..." value="{{ search or '' }}">
+            <button type="submit">Search</button>
+        </form>
+    </div>
+    <h1>Theaters</h1>
+    <div id="theater-table">
+        <table>
+            <tr>
+                <th>Theater Name</th>
+                <th>Address</th>
+            </tr>
+
+            {% for theater in theater %}
+            <tr>
+                <td>{{ theater[0] }}</td>
+                <td>{{ theater[1] }}</td>
+            </tr>
+            {% endfor %}
+
+        </table>
+
+    </div>
+    
+
+        
+</body>
+</html>
