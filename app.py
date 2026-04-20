@@ -1,8 +1,9 @@
 from flask import Flask, render_template, request
 import psycopg2
- 
+import os
+
 app = Flask(__name__)
- 
+
 # Database connection
 def get_db_connection():
     conn = psycopg2.connect(
@@ -13,14 +14,64 @@ def get_db_connection():
         port=os.environ.get('DB_PORT')
     )
     return conn
- 
+
 @app.route('/movies', methods=['GET', 'POST'])
 def movies():
     conn = get_db_connection()
     cur = conn.cursor()
- 
+
     search = request.form.get('title')
- 
+
+    if search:
+        cur.execute("""
+            SELECT * FROM Movie
+            WHERE title ILIKE %s
+        """, ('%' + search + '%',))
+    else:
+        cur.execute("""
+            SELECT * FROM Movie
+        """)
+
+    movies = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    return render_template('movies.html', movies=movies, search=search)
+
+@app.route('/', methods=['GET', 'POST'])
+def dashboard():
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    total_movies = cur.execute("SELECT COUNT(*) FROM Movies")
+    total_movies = cur.fetchone()[0]
+
+    total_showings = cur.execute("SELECT COUNT(*) FROM showing WHERE date BETWEEN '2024-05-01' AND '2024-05-31'")
+    total_showings = cur.fetchone()[0]
+
+    cur.execute("""
+                SELECT * FROM MovieShowings WHERE date BETWEEN '2024-05-01' AND '2024-05-31'
+            """)
+
+    movies = cur.fetchall()
+
+    total_tickets = cur.execute("SELECT COUNT(*) FROM ticket")
+    total_tickets = cur.fetchone()[0]
+
+    total_revenue = cur.execute("SELECT SUM(price) FROM ticket")
+    total_revenue = cur.fetchone()[0]
+    cur.close()
+    conn.close()
+    return render_template('dashboard.html', total_movies=total_movies, total_showings=total_showings, total_tickets=total_tickets, total_revenue=total_revenue, movies=movies)
+
+@app.route('/showtimes', methods=['GET', 'POST'])
+def showtimes():
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    search = request.form.get('title')
+
     if search:
         cur.execute("""
             SELECT * FROM Movies
@@ -30,36 +81,59 @@ def movies():
         cur.execute("""
             SELECT * FROM Movies
         """)
- 
+
     movies = cur.fetchall()
- 
+
     cur.close()
     conn.close()
- 
-    return render_template('movies.html', movies=movies, search=search)
- 
-@app.route('/', methods=['GET', 'POST'])
-def dashboard():
+
+    return render_template('showtimes.html', movies=movies, search=search)
+
+@app.route('/theaters', methods=['GET', 'POST'])
+def theaters():
     conn = get_db_connection()
     cur = conn.cursor()
- 
-    total_movies = cur.execute("SELECT COUNT(*) FROM Movies")
-    total_movies = cur.fetchone()[0]
- 
-    total_showings = cur.execute("SELECT COUNT(*) FROM showing WHERE date BETWEEN '2024-05-01' AND '2024-05-31'")
-    total_showings = cur.fetchone()[0]
- 
-    cur.execute("""
-                SELECT * FROM showing WHERE date BETWEEN '2024-05-01' AND '2024-05-31'
-            """)
- 
-    movies = cur.fetchall()
- 
-    total_tickets = cur.execute("SELECT COUNT(*) FROM ticket")
-    total_tickets = cur.fetchone()[0]
+
+    search = request.form.get('address')
+
+    if search:
+        cur.execute("""
+            SELECT name, address FROM Theater
+            WHERE address ILIKE %s
+        """, ('%' + search + '%',))
+    else:
+        cur.execute("""
+            SELECT name, address FROM Theater
+        """)
+
+    theater = cur.fetchall()
+
     cur.close()
     conn.close()
-    return render_template('dashboard.html', total_movies=total_movies, total_showings=total_showings, total_tickets=total_tickets, movies=movies)
- 
+
+    return render_template('theaters.html', theater=theater, search=search)
+
+@app.route('/customers', methods=['GET', 'POST'])
+def customers():
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    search = request.form.get('customerName')
+
+    if search:
+        cur.execute("""
+                    SELECT * FROM CustomerDetails
+                    WHERE customerName ILIKE %s
+                    """,('%' + search + '%',))
+    else:
+        cur.execute("""
+                    SELECT * FROM CustomerDetails
+                    """)
+    customers = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    return render_template('customers.html', customers = customers, search = search)
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)
